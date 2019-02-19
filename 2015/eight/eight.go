@@ -51,13 +51,25 @@ func stripCruft(input string) string {
 	return result
 }
 
+func addCruft(input string) string {
+	result := doubleQuoteMatcher.ReplaceAllString(input, "***")
+	result = quoteMatcher.ReplaceAllString(result, "!!!!")
+	result = hexMatcher.ReplaceAllString(result, "?????")
+	result = slashMatcher.ReplaceAllString(result, "++++")
+	return result
+}
+
 func main() {
 	lines, _ := readLines("D:\\code\\advent\\2015\\eight\\eight.in")
-	sum := 0
+	sum, cruftSum := 0, 0
 	for _, line := range lines {
-		fmt.Println(line)
-		fmt.Println(stripCruft(line))
 		sum += len(line) - len(stripCruft(line))
 	}
 	fmt.Println(sum)
+	for _, line := range lines {
+		fmt.Println(line)
+		fmt.Println(addCruft(line))
+		cruftSum += len(addCruft(line)) - len(line)
+	}
+	fmt.Println(cruftSum)
 }
