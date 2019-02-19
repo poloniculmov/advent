@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 )
 
 func readLines(path string) (lines []string, err error) {
@@ -65,15 +66,32 @@ func isNice(line string) (nice bool) {
 var vowelMatcher = regexp.MustCompile(`[aeiou]`)
 var badString = regexp.MustCompile(`ab|cd|pq|xy`)
 
-func main() {
-	lines, err := readLines("/home/alex/projects/advent/2015/five/five.in")
-	count := 0
-	fmt.Println(err)
-	for _, line := range lines {
+func isNicer(line string) bool {
+	foundPair, foundDouble := false, false
+	for i := 0; i < len(line)-2; i++ {
+		currentGroup := string(line[i]) + string(line[i+1])
+		if strings.Contains(line[i+2:], currentGroup) {
+			foundPair = true
+		}
+		if line[i] == line[i+2] {
+			foundDouble = true
+		}
+	}
+	return foundDouble && foundPair
+}
 
+func main() {
+	lines, _ := readLines("/home/alex/projects/advent/2015/five/five.in")
+	count, nicerCount := 0, 0
+	for _, line := range lines {
 		if isNice(line) == true {
 			count++
 		}
+		if isNicer(line) == true {
+			nicerCount++
+		}
 	}
 	fmt.Println(count)
+	fmt.Println(nicerCount)
+	fmt.Println(isNicer("qjhvhtzxzqqjkmpb"))
 }
