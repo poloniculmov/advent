@@ -40,6 +40,7 @@ func readLines(path string) (lines []string, err error) {
 }
 
 var lights [1000][1000]bool
+var newLights [1000][1000]int
 
 func turnOn(startX int, startY int, stopX int, stopY int) {
 	for i := startX; i <= stopX; i++ {
@@ -108,10 +109,76 @@ func doCommand(command string) {
 	}
 }
 
+func newTurnOn(startX int, startY int, stopX int, stopY int) {
+	for i := startX; i <= stopX; i++ {
+		for j := startY; j <= stopY; j++ {
+			newLights[i][j]++
+		}
+	}
+}
+
+func newTurnOff(startX int, startY int, stopX int, stopY int) {
+	for i := startX; i <= stopX; i++ {
+		for j := startY; j <= stopY; j++ {
+			newLights[i][j]--
+			if newLights[i][j] < 0 {
+				newLights[i][j] = 0
+			}
+		}
+	}
+}
+
+func newToggle(startX int, startY int, stopX int, stopY int) {
+	for i := startX; i <= stopX; i++ {
+		for j := startY; j <= stopY; j++ {
+			newLights[i][j] += 2
+		}
+	}
+}
+
+func newDoCommand(command string) {
+	var match = offMatch.FindStringSubmatch(command)
+	if len(match) > 1 {
+		a, _ := strconv.Atoi(match[1])
+		b, _ := strconv.Atoi(match[2])
+		c, _ := strconv.Atoi(match[3])
+		d, _ := strconv.Atoi(match[4])
+		newTurnOff(a, b, c, d)
+	}
+	match = onMatch.FindStringSubmatch(command)
+	if len(match) > 1 {
+		a, _ := strconv.Atoi(match[1])
+		b, _ := strconv.Atoi(match[2])
+		c, _ := strconv.Atoi(match[3])
+		d, _ := strconv.Atoi(match[4])
+		newTurnOn(a, b, c, d)
+	}
+	match = toggleMatch.FindStringSubmatch(command)
+	if len(match) > 1 {
+		a, _ := strconv.Atoi(match[1])
+		b, _ := strconv.Atoi(match[2])
+		c, _ := strconv.Atoi(match[3])
+		d, _ := strconv.Atoi(match[4])
+		newToggle(a, b, c, d)
+	}
+}
+
+func totalBrightnes() (brightness int) {
+	brightness = 0
+	for i := 0; i <= 999; i++ {
+		for j := 0; j <= 999; j++ {
+			brightness += newLights[i][j]
+		}
+	}
+	return
+}
+
 func main() {
 	lines, _ := readLines("/home/alex/projects/advent/2015/six/six.in")
 	for _, line := range lines {
 		doCommand(line)
+		newDoCommand(line)
 	}
 	fmt.Println(howManyOn())
+	fmt.Println(totalBrightnes())
 }
