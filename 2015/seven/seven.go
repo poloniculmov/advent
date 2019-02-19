@@ -68,12 +68,10 @@ func executeCommand(command string, label string) {
 }
 
 func doNot(command string, label string) {
-	fmt.Println(command)
 	command = strings.Replace(command, "NOT ", "", -1)
 	gates[label] = ^valueOfWire(command)
 }
 func doAnd(command string, label string) {
-	fmt.Println(command)
 	command = strings.Replace(command, "AND ", "", -1)
 	ws := strings.Split(command, " ")
 	if ws[0] == "1" {
@@ -117,5 +115,14 @@ func main() {
 		tokens := strings.Split(l, " -> ")
 		ops[tokens[1]] = tokens[0]
 	}
-	fmt.Println(valueOfWire("a"))
+	a := valueOfWire("a")
+	fmt.Println(a)
+	for _, l := range lines {
+		tokens := strings.Split(l, " -> ")
+		ops[tokens[1]] = tokens[0]
+	}
+	ops["b"] = strconv.Itoa(int(a))
+	gates = make(map[string]uint16)
+	a = valueOfWire("a")
+	fmt.Println(a)
 }
