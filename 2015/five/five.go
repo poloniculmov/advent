@@ -93,5 +93,4 @@ func main() {
 	}
 	fmt.Println(count)
 	fmt.Println(nicerCount)
-	fmt.Println(isNicer("qjhvhtzxzqqjkmpb"))
 }
