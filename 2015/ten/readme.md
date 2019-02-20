@@ -1,0 +1,2 @@
+The second star was very hard, because I don't know enough about Golang. Apperently, string concatenation is extremely slow, I had to peak on reddit to 
+find out that is should use byte buffers. Neato!
