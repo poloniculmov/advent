@@ -70,13 +70,28 @@ func generateRoute(startingCity string, lengthSoFar int) int {
 		}
 	}
 	visited[nextCity] = true
-	fmt.Println("Selecting" + nextCity)
 	return lengthSoFar + generateRoute(nextCity, min)
+}
+
+func generateMaxRoute(startingCity string, lengthSoFar int) int {
+	if len(visited) == len(distances) {
+		return lengthSoFar
+	}
+	dists := distances[startingCity]
+	nextCity, max := "", 0
+	for city, length := range dists {
+		if !visited[city] && length > max {
+			nextCity = city
+			max = length
+		}
+	}
+	visited[nextCity] = true
+	fmt.Println("Selecting " + nextCity)
+	return lengthSoFar + generateMaxRoute(nextCity, max)
 }
 
 func main() {
 	lines, _ := readLines("/home/alex/projects/advent/2015/nine/nine.in")
-	fmt.Println(lines)
 	processDistances(lines)
 	minDistance := 99999999
 	for city := range distances {
@@ -88,4 +103,17 @@ func main() {
 		}
 	}
 	fmt.Println(minDistance)
+	maxDistance := 0
+	for city := range distances {
+		visited = make(map[string]bool)
+		visited[city] = true
+		fmt.Println("Starting on " + city)
+		newRouteCost := generateMaxRoute(city, 0)
+		if maxDistance < newRouteCost {
+			maxDistance = newRouteCost
+		}
+		fmt.Println(maxDistance)
+	}
+	fmt.Println(maxDistance)
+
 }
