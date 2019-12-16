@@ -41,14 +41,32 @@ func readLines(path string) (lines []string, err error) {
 
 func main() {
 	lines, _ := readLines("a.in")
-	sum := 0
+	sum, sumb := 0, 0
 	for _, line := range lines {
 		i, _ := strconv.Atoi(line)
 		sum += fuel(i)
+		sumb += totalFuel(i)
 	}
-	fmt.Print(sum)
+	fmt.Println(sum, sumb)
 }
 
 func fuel(mass int) int {
 	return int(math.Floor(float64(mass/3.0))) - 2
+}
+
+func fuelB(mass int) int {
+	result := fuel(mass)
+	if result > 0 {
+		return result
+	}
+	return 0
+}
+
+func totalFuel(mass int) int {
+	if mass <= 0 {
+		return 0
+	}
+	needs := fuelB(mass)
+	fmt.Println(needs)
+	return needs + totalFuel(needs)
 }
