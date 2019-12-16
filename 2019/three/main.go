@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -47,67 +46,87 @@ func main() {
 	firstWire := strings.Split(lines[0], ",")
 	secondWire := strings.Split(lines[1], ",")
 	x, y := 10000, 10000
+	s := 0
 	for step := range firstWire {
 		dir := string(firstWire[step][0])
 		size, _ := strconv.Atoi(firstWire[step][1:])
 		switch dir {
 		case "R":
 			for arg := y; arg <= y+size; arg++ {
-				paths[x][arg] += 1
+				if paths[x][arg] == 0 {
+					paths[x][arg] = s
+				}
+				s++
 			}
 			y += size
 		case "L":
 			for arg := y; arg >= y-size; arg-- {
-				paths[x][arg] += 1
+				if paths[x][arg] == 0 {
+					paths[x][arg] = s
+				}
+				s++
 			}
 			y -= size
-		case "D":
+		case "U":
 			for arg := x; arg <= x+size; arg++ {
-				paths[arg][y] += 1
+				if paths[arg][y] == 0 {
+					paths[arg][y] = s
+				}
+				s++
 			}
 			x += size
-		case "U":
+		case "D":
 			for arg := x; arg >= x-size; arg-- {
-				paths[arg][y] += 1
+				if paths[arg][y] == 0 {
+					paths[arg][y] = s
+				}
+				s++
 			}
 			x -= size
 		}
+		s--
 	}
 	x, y = 10000, 10000
-
+	s = 0
+	var vals []int
 	for step := range secondWire {
 		dir := string(secondWire[step][0])
 		size, _ := strconv.Atoi(secondWire[step][1:])
 		switch dir {
 		case "R":
 			for arg := y; arg <= y+size; arg++ {
-				paths[x][arg] += 100
+				if paths[x][arg] > 0 {
+					vals = append(vals, s+paths[x][arg])
+				}
+				s++
 			}
 			y += size
 		case "L":
 			for arg := y; arg >= y-size; arg-- {
-				paths[x][arg] += 100
+				if paths[x][arg] > 0 {
+					vals = append(vals, s+paths[x][arg])
+				}
+				s++
 			}
 			y -= size
-		case "D":
+		case "U":
 			for arg := x; arg <= x+size; arg++ {
-				paths[arg][y] += 100
+				if paths[arg][y] > 0 {
+					vals = append(vals, s+paths[arg][y])
+				}
+				s++
 			}
 			x += size
-		case "U":
+		case "D":
 			for arg := x; arg >= x-size; arg-- {
-				paths[arg][y] += 100
+				if paths[arg][y] > 0 {
+					vals = append(vals, s+paths[arg][y])
+				}
+				s++
 			}
 			x -= size
 		}
-	}
-	var vals []int
-	for i := range paths {
-		for j := range paths[i] {
-			if paths[i][j] > 100 && paths[i][j] < 200 {
-				vals = append(vals, int(math.Abs(float64(i-10000))+math.Abs(float64(j-10000))))
-			}
-		}
+		s--
 	}
 	sort.Ints(vals)
 	fmt.Printf("%v", vals)
