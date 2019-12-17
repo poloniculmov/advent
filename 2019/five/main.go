@@ -45,7 +45,7 @@ func main() {
 }
 
 func compute(prog []string) string {
-	input := 1
+	input := 5
 	position := 0
 	endEncountered := false
 	for !endEncountered {
@@ -70,6 +70,36 @@ func compute(prog []string) string {
 		case "04":
 			println(prog[arg1])
 			position += 2
+		case "05":
+			val2, _ := strconv.Atoi(prog[arg2])
+			if val1 != 0 {
+				position = val2
+			} else {
+				position += 3
+			}
+		case "06":
+			val2, _ := strconv.Atoi(prog[arg2])
+			if val1 == 0 {
+				position = val2
+			} else {
+				position += 3
+			}
+		case "07":
+			val2, _ := strconv.Atoi(prog[arg2])
+			if val1 < val2 {
+				prog[arg3] = "1"
+			} else {
+				prog[arg3] = "0"
+			}
+			position += 4
+		case "08":
+			val2, _ := strconv.Atoi(prog[arg2])
+			if val1 == val2 {
+				prog[arg3] = "1"
+			} else {
+				prog[arg3] = "0"
+			}
+			position += 4
 		}
 	}
 	return prog[0]
@@ -92,15 +122,20 @@ func parseInstruction(instruction string, memory []string, position int) (string
 	} else {
 		arg1, _ = strconv.Atoi(memory[position+1])
 	}
-	if string(paddedOp[1]) == "1" {
-		arg2 = position + 2
-	} else {
-		arg2, _ = strconv.Atoi(memory[position+2])
-	}
-	if string(paddedOp[0]) == "1" {
-		arg3 = position + 3
-	} else {
-		arg3, _ = strconv.Atoi(memory[position+3])
+	if opCode != "03" && opCode != "04" {
+		if string(paddedOp[1]) == "1" {
+			arg2 = position + 2
+		} else {
+			arg2, _ = strconv.Atoi(memory[position+2])
+		}
+		if opCode != "05" && opCode != "06" {
+			if string(paddedOp[0]) == "1" {
+				arg3 = position + 3
+			} else {
+				arg3, _ = strconv.Atoi(memory[position+3])
+			}
+
+		}
 	}
 	return opCode, arg1, arg2, arg3
 }
