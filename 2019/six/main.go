@@ -42,24 +42,43 @@ type planet struct {
 	name     string
 	children []*planet
 	depth    int
+	parent   *planet
 }
 
 var topNode planet
 var lines []string
+var you planet
+var target planet
 
 func main() {
 	lines, _ = readLines("input")
 	fmt.Printf("%v", childrenOf("COM"))
 	topNode = planet{name: "COM", depth: 0}
 	setChildrenFor("COM", &topNode)
-	setDepths(&topNode, 0)
-	println(countOrbits(&topNode))
+	println(aTotal)
+	println(you.depth)
+	println(target.depth)
+	//myParents := parentOf(&you)
+	for _, x := range parentOf(&target) {
+		fmt.Printf("%+v \n", x)
+	}
+
 }
 
+var aTotal = 0
+
 func setChildrenFor(planetName string, planetNode *planet) {
+	aTotal += planetNode.depth
 	children := childrenOf(planetName)
 	for i := range children {
-		newPlanet := planet{name: children[i]}
+		newPlanet := planet{name: children[i], parent: planetNode, depth: planetNode.depth + 1}
+		if newPlanet.name == "YOU" {
+			you = newPlanet
+		}
+		if newPlanet.name == "SAN" {
+			target = newPlanet
+		}
+
 		planetNode.children = append(planetNode.children, &newPlanet)
 		setChildrenFor(children[i], &newPlanet)
 	}
@@ -76,27 +95,10 @@ func childrenOf(planetName string) []string {
 	return result
 }
 
-func setDepths(node *planet, level int) {
-	node.depth = level
-	for _, child := range node.children {
-		setDepths(child, level+1)
+func parentOf(node *planet) []*planet {
+	if node.name == "COM" {
+		return []*planet{}
 	}
-}
-
-func countOrbits(topNode *planet) int {
-	queue := make([]*planet, 0)
-	queue = append(queue, topNode)
-	//level := 0
-	size := 0
-	for len(queue) > 0 {
-		nextUp := queue[0]
-		queue = queue[1:] //remove nextUp from queue
-		size += nextUp.depth
-		if len(nextUp.children) > 0 {
-			for _, child := range nextUp.children {
-				queue = append(queue, child)
-			}
-		}
-	}
-	return size
+	x := []*planet{node}
+	return append(x, parentOf(node.parent)...)
 }
